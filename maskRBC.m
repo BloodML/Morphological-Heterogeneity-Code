@@ -1,7 +1,5 @@
 function mask = maskRBC(originalImage,statistic, radius, spotSize)
 
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here4
 
 %% Segmentation
 %Adaptive Thresholding, Hole Filling, Speck Removal, and Watershed
