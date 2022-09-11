@@ -1,6 +1,4 @@
 function [labels] = labelRBCs(originalImage, mask, bboxes, ensemble)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
 
 
 %Set the classification image size
