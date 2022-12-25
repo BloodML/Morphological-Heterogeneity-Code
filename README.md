@@ -32,6 +32,6 @@ There is a lot of data in the MH dataset, so the code is designed to work iterat
 ### Reproduce the Average Diameter Data & High Resolution RBC Images.
 This will require all unit-week-run data. The data must also be separated into subfolders with the **U#W#_#** naming convention. By default, the script assumes the base path is **'D:\MH Dataset'**.
 1. Go to the **MH Data Analysis** folder and open the **Routt_Austin_MH_Data_Analysis_Main.m** script.
-2. The script is broken up into section, and at the top of each section a base directory path is typically defined. Change these to the base directory of your copy of the entire Unit-Week_Run MH dataset. Alternatively, find and replace all instances of **D:\MH Dataset** with your chosen base path name.
+2. The script is broken up into sections, and at the top of each section a base directory path is typically defined. Change these to the base directory of your copy of the entire Unit-Week_Run MH dataset. Alternatively, find and replace all instances of **D:\MH Dataset** with your chosen base path name.
 3. Run each section at a time, reading the code and comments to understand what is happening, or just press play.
 	- This will take a while to finish.
