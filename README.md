@@ -1,7 +1,7 @@
 ﻿# Morphological-Heterogeneity-Code
 
 ## Introduction
-This respository contains the code and trained neural networks that were used to create the ["Morphological Heterogeneity" (MH) dataset](https://doi.org/10.18738/T8/76JRDQ), which contains images, binary masks, bounding boxes, morphology labels, and other metrics of red blood cells (RBCs) flowing through a microfluidic device.  What follows is a brief tutorial on how to use it.
+This repository contains the code and trained neural networks that were used to create the ["Morphological Heterogeneity" (MH) dataset](https://doi.org/10.18738/T8/76JRDQ), which contains images, binary masks, bounding boxes, morphology labels, and other metrics of red blood cells (RBCs) flowing through a microfluidic device.  What follows is a brief tutorial on how to use it.
 
 ## Requirements
 - MATLAB 2021b or higher
