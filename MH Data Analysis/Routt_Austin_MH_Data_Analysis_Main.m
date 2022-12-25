@@ -282,12 +282,12 @@ disp('Problem 2 end')
 disp('-----------------------------------------------------------')
 
 
-%% Clean & Analyze the average diameter distributions to get a more precise range for future applications in identification and sorting
+%% Low Resolution: Clean & Analyze the average diameter distributions to get a more precise range for future applications in identification and sorting
 clear all
 close all
 clc
 
-disp('Problem 3 start: Clean & Analyze the average diameter distributions')
+disp('Problem 3 start: Low Resolution - Clean & Analyze the average diameter distributions')
 %Define the export directory
 baseDir = 'D:\MH Dataset';
 
@@ -342,7 +342,8 @@ end
 convFac = 0.2193; %[um/px]
 %Also add the diameter to the cell table via a new column
 cellTable.("Average Diameter") = 2*sqrt(double(cellTable.Area)/pi)*convFac;
-%% Examine the Raw Data
+
+% Examine the Raw Data
 %Define RBC morphology label order
 rbcLabels = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
 
@@ -362,7 +363,7 @@ saveas(boxplotFig1, boxplotExport);
 %Get normality and qq-plots to determine if data is normally distributed
 AverageDiameterNormalityAnalysis(cellTable,dirNormalityRaw)
 
-%% Cleaning Begins
+% Cleaning Begins
 %  First, remove duplicates from each run by iterating through every unit-week-run
 %  Create a new table without run duplicates (Bounding box duplicates)
 cellTableNoDups = cellTable(1,:);
@@ -401,7 +402,7 @@ for i = 1:1:7
     end
 end
 
-%% Analyze each morphology class by height, width, and bounding box outliers
+% Analyze each morphology class by height, width, and bounding box outliers
 
 %Get the height, width, & Aspect Ratio of the bounding boxes
 bboxesAll = table2array(cellTableNoDups(:, 'Bboxes'));
@@ -472,7 +473,7 @@ for uu = rbcLabels
         RandomMorphMontage(aspectReg, sampleSize1, strAspectReg, baseDir, randomAspectReg)
     end
 end
-%%
+
 % Remove RBCs based on the generated random samples from the bbox analysis
 %Define RBC morphology label order
 rbcLabels = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
@@ -545,7 +546,8 @@ for uu = rbcLabels
      %Generate a random sample of what is fixed
      RandomMorphMontage(cellTableNoOddBbox(cellTableNoOddBbox.Label == uu,:), sampleSize1, strFixed, baseDir, randomFix);
 end
-%% Analyze each morphology class by average diameter outliers
+
+% Analyze each morphology class by average diameter outliers
 
 %Define the sample size
 sampleSize2 = 306;
@@ -582,7 +584,7 @@ for uu = rbcLabels
     end
 end
 
-%% Remove Outliers from each morphology type depending on random sample results
+% Remove Outliers from each morphology type depending on random sample results
 %Create a table for cleaned data
 cellTableClean = cellTableNoOddBbox(1,:);
 %Define the sample sizes
@@ -655,7 +657,7 @@ cellFullFileName = fullfile(baseDir, baseFileName);
 
 save(cellFullFileName,"cellTableClean");
 
-%% Analyze the cleaned data via boxplots and normality tests
+% Analyze the cleaned data via boxplots and normality tests
 %Load the clean data
 baseFileName = strcat("cellTableClean",".mat");
 cellFullFileName = fullfile(baseDir, baseFileName);
@@ -782,7 +784,8 @@ end
 %Write the ttest results to excel file
 ttestResultsExport = fullfile(dirExport,'ttestResults.xls');
 writetable(ttestResults,ttestResultsExport, 'FileType','spreadsheet');
-%% Plot the Average Diameters by Morphology Type
+
+% Plot the Average Diameters by Morphology Type
 
 %Plot the distributions for comparison to a previous study
 %Get the histogram counts of each morphology diameter
@@ -817,7 +820,7 @@ plotExport = fullfile(dirExport, "AverageDiameterPlot.m");
 
 %Export the figure to the Data Analysis Folder
 saveas(plotFig, plotExport);
-%%
+
 % Get the descriptive statistics for each distribution 
 means = [mean(D_avgDiameter), mean(E1_avgDiameter), mean(E2_avgDiameter), ...
     mean(E3_avgDiameter),mean(SE_avgDiameter), mean(S_avgDiameter), mean(ST_avgDiameter),];
@@ -870,7 +873,7 @@ descrStats = table(...
 %Write the descriptive statistics to a file
 descrStatsExport = fullfile(dirExport,'cleanedDescriptiveStats.xls');
 writetable(descrStats,descrStatsExport, 'FileType','spreadsheet');
-%%
+
 %Get the mean & std confidence intervals the classic way, assumming normality
 % Make 95% confidence intervals using the classic formulas for mean & std
 
@@ -915,7 +918,7 @@ CI95_Bootstrap_Med_UCs = [ciD(2,3); ciE1(2,3); ciE2(2,3); ciE3(2,3); ciSE(2,3); 
 CI95_Bootstrap_IQR_LCs = [ciD(1,4); ciE1(1,4); ciE2(1,4); ciE3(1,4); ciSE(1,4); ciS(1,4); ciST(1,4)];
 CI95_Bootstrap_IQR_UCs = [ciD(2,4); ciE1(2,4); ciE2(2,4); ciE3(2,4); ciSE(2,4); ciS(2,4); ciST(2,4)];
 
-%% Put 95% confidence interval data into a table
+% Put 95% confidence interval data into a table
 % Create the confidence table
 Confidences = table(...
     rbcLabels',...
@@ -974,7 +977,6 @@ AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'
 AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'ST'), :),dirBootstrap)
 
 
-%%
 % Calculate bootstrap effect sizes using bootstrap mean and std bootstats
 
 %Load table
@@ -1109,7 +1111,7 @@ end
 effectStatsExport = fullfile(dirExport,'cleanedEffectSize.xls');
 writetable(effectResults,effectStatsExport, 'FileType','spreadsheet');
 
-%% Put the effect size data into a matrix, plot, and save
+% Put the effect size data into a matrix, plot, and save
 
 %Define the rbc labels 
 groups = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
@@ -1140,7 +1142,7 @@ hm.CellLabelFormat = '%.2f%%';
 dirExportEffectSize = fullfile(dirExport, "Effect_Size_Matrix.m");
 saveas(hm, dirExportEffectSize);
 
-%% Plot the mean average diameter 95% CIs for each morphology class
+% Plot the mean average diameter 95% CIs for each morphology class
 dE1 = [1 2];
 e2ST = [3 7];
 sSE = [5 6];
@@ -1198,7 +1200,7 @@ title('All RBC Morphologies')
 dirExportConfidencePlot = fullfile(dirExport, "ConfidencePlot.png");
 saveas(Fig1, dirExportConfidencePlot);
 
-%% Export the data and cell tables to json format
+% Export the data and cell tables to json format
 
 cellTableClean_JSONName = 'cleanCellTable.json';
 dirExportJSONcleanCellTable = fullfile(dirExport, cellTableClean_JSONName);
@@ -1209,3 +1211,824 @@ fclose(fid);
 disp('Problem 3 end')
 disp('-----------------------------------------------------------')
 
+%% High Resolution: Clean & Analyze the average diameter distributions to get a more precise range for future applications in identification and sorting
+clear all
+close all
+clc
+
+%Set the random number generator seed
+rng('default')
+
+disp('Problem 4 start: High Resolution - Extract RBCs, Clean, & Analyze the high resolution average diameter distributions')
+%Define the import/export directory
+baseDir = 'D:\MH Dataset';
+baseDir2 = '.\HiRes Area';
+
+%Load the cleaned cell table data
+baseFileName = strcat("cellTableClean",".mat");
+cellFullFileName = fullfile(baseDir, baseFileName);
+load(cellFullFileName,"cellTableClean");
+
+%Create the export directories if they doesn't exist
+dirExport = fullfile(baseDir2, 'Average Diameter Analysis');
+dirNormalityClean = fullfile(dirExport, 'Normality Analysis (Clean)');
+dirBootstrap = fullfile(dirExport, 'Bootstrap Analysis');
+dirRandom = fullfile(dirExport, 'Random Samples');
+
+if ~exist(baseDir2, 'dir')
+    mkdir(baseDir2)
+end
+if ~exist(dirExport, 'dir')
+    mkdir(dirExport)
+end
+if ~exist(dirNormalityClean, 'dir')
+    mkdir(dirNormalityClean)
+end
+if ~exist(dirBootstrap, 'dir')
+    mkdir(dirBootstrap)
+end
+if ~exist(dirRandom, 'dir')
+    mkdir(dirRandom)
+end
+
+% Get tighter masks
+cellTableCleanNewArea = cellTableClean;
+
+
+%Set the directories for masks, images, stats, and bounding boxes
+dirMasks = strcat(baseDir2,"\Masks");
+dirImages = strcat(baseDir2,"\Images");
+dirCroppedImages = strcat(baseDir2,"\Cropped Images");
+
+
+%Create the export directories if they don't exist
+if ~exist(dirMasks, 'dir')
+    mkdir(dirMasks)
+end
+
+if ~exist(dirImages, 'dir')
+    mkdir(dirImages)
+end
+if ~exist(dirCroppedImages, 'dir')
+    mkdir(dirCroppedImages)
+end
+
+% Extract the individual RBCs from the raw images using the clean cell table
+%Iterate through the table
+for i= 1:1:height(cellTableClean)
+    %Set Y equal to the row (cell) and extract row (cell) information
+    Y = cellTableClean(i, :);
+    id = table2array(Y(1, 1));
+    unit = table2array(Y(1, 2));
+    week = table2array(Y(1, 3));
+    image = table2array(Y(1, 5));
+    mask = table2array(Y(1, 6));
+    run = table2array(Y(1, 4));
+    bboxes = table2array(Y(1, 11));
+    %Generate a name string for the cell
+    str = strcat("U", num2str(unit),"W",num2str(week), "_", num2str(run));
+
+    %Set the import directories for original images & masks
+    imageDir = fullfile(baseDir,str,"Images", image );
+    maskDir = fullfile(baseDir,str,"Masks", mask );
+    %Read the original image and mask
+    originalImage = imread(imageDir, 'png');
+    mask = imread(maskDir, 'png');
+
+    %Set the high res image size
+    cropSize = 227;
+
+    %Create a 51x51 blank image and set the background color to gray
+    background = ones(51, 'uint8')*220;
+
+    %Initialize storage variables
+    croppedImages = zeros(cropSize);  %Stores the cropped RBC grayscale images
+    %iterate through bounding boxes and segment cells
+
+
+    %Set the current bounding box
+    currentBbox = bboxes;
+    %Crop the cell in the current bounding box, call it rbc
+    rbc = imcrop(originalImage,currentBbox );
+    %Crop the mask of the cell in the current bounding box
+    rbcBW = imcrop(mask,currentBbox );
+    %Remove binary masks on the edge, leaving just the center cell mask
+    rbcBW = bwareafilt(rbcBW,1);
+    %Apply the mask to the cell
+    rbc = rbc.*uint8(rbcBW);
+    %Turn black to gray
+    rbc(rbc == 0) = 220;
+    %Find height and width of rbc image
+    [w, h] = size(rbc);
+    %Find the best position for rbc to be pasted onto a 51x51 blank image
+    startrow =  max(1, uint8((51 - w)/2));
+    startcol =  max(1, uint8((51 - h)/2));
+    a = background;
+    b = rbc;
+    %Paste rbc into 51x51 image
+    a(startrow:startrow+size(b,1)-1,startcol:startcol+size(b,2)-1) = b;
+    %Resize to 227x227
+    a = imresize(a, [cropSize, cropSize]);  % scaling by 19.8112264514
+    a = im2gray(a);      %make sure its a grayscale image
+    a = mat2gray(a); %Normalize
+
+    %Create the base filename for images & masks
+    baseFileName = strcat(num2str(id),'.png');
+    croppedImageFullFileName = fullfile(dirCroppedImages, baseFileName);
+    %Write cropped image before segmenting
+    imwrite(a, croppedImageFullFileName);
+    %Segment the rbc
+    a = Routt_Austin_Segmenter(a);
+    croppedImageMask = logical(a);
+    BW2 = ~bwareaopen(~croppedImageMask,30);
+    area = sum(BW2, 'all');
+    %scale back the area
+    area_downscale = double(area)/19.8112264514; 
+    %imshow(BW2)
+    cellTableCleanNewArea.Image(i) = baseFileName;
+    cellTableCleanNewArea.Mask(i) = baseFileName;
+    cellTableCleanNewArea.Area(i) = area;
+    %Define a conversion factor for px to um and convert the cell area into diameter
+    convFac = 0.2193; %[um/px]
+    %Also add the diameter to the cell table via a new column
+    cellTableCleanNewArea.("Average Diameter")(i) = 2*sqrt(double(area_downscale)/pi)*convFac;
+    %Set image & mask full names
+    maskFullFileName = fullfile(dirMasks, baseFileName);
+    imageFullFileName = fullfile(dirImages, baseFileName);
+    %Write image
+    imwrite(a, imageFullFileName);
+    %Write mask
+    imwrite(BW2, maskFullFileName);
+
+end
+
+% Save & export new data table
+%Export the clean cell table to the base import directory
+baseFileName = strcat("cellTableCleanNewArea",".mat");
+cellFullFileName = fullfile('.', baseFileName);
+
+save(cellFullFileName,"cellTableCleanNewArea");
+
+% Load cellTableCleanNewArea & classify RBCs as Good or Bad segmentations
+%Load the data and neural net
+baseFileName = strcat("cellTableCleanNewArea",".mat");
+cellFullFileName = fullfile('.', baseFileName);
+load(cellFullFileName,"cellTableCleanNewArea");
+
+%Load the good/bad classifier
+load('.\Routt_Austin_Darknet_oversample_GoodBadRBC.mat');
+darkNet = net;
+clear net
+
+%Iterate through the table and get the good/bad labels
+labels = categorical([]);
+
+for ii = 1:1:height(cellTableCleanNewArea)
+    img = fullfile(baseDir, "HiRes Area","Images", cellTableCleanNewArea.Image(ii));
+    data = imread(img);
+    data = im2gray(data);
+    data = mat2gray(data);
+    [I, score1] = classify(darkNet,data);
+    labels(ii) = I;
+end
+
+% Add the good bad labels in a new column
+cellTableCleanNewArea.Quality = labels';
+
+%Get the good subset
+subsetGood = cellTableCleanNewArea(cellTableCleanNewArea.Quality=='good', :);
+
+%Get the bad subset
+subsetBad = cellTableCleanNewArea(cellTableCleanNewArea.Quality=='bad', :);
+%% Randomly sample from the sphereocytes and look outliers to remove
+subsetGoodS = subsetGood(subsetGood.Label=='S', :);
+subsetSSD = std(subsetGoodS.("Average Diameter"));
+subsetSMean = mean(subsetGoodS.("Average Diameter"));
+subsetGoodS = subsetGoodS(subsetGoodS.("Average Diameter")>=subsetSMean+subsetSSD*2, :);
+sSamples = [];
+samplesize = 1000;
+for ii = 1:1:samplesize
+    randS = datasample(subsetGoodS,samplesize,'Replace',false);
+    
+    sSampleDir = fullfile(baseDir, "HiRes Area","Images", randS.Image(ii));
+
+
+    sSample = imread(sSampleDir, 'png');
+
+
+    sSamples(:,:,ii) = uint8(sSample);
+end
+fig1 = figure;
+montage(uint8(sSamples))
+title("S")
+
+% Remove the ouliers in S
+subsetGood2 = subsetGood;
+subsetGood2(subsetGood2.Label=='S' & subsetGood2.("Average Diameter")>=subsetSMean+subsetSSD*2, :) = [];
+
+% Randomly sample from Good and Bad Morphologies
+% Show 100 random samples of each morphology class from the good subset
+samplesize = 100;
+rbcLabels = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
+for qq = rbcLabels
+
+    morphGood = subsetGood2(subsetGood2.Label==qq{1}, :);
+    %Get the good sample from the morphology median+-MAD 
+    morphGoodMedian = median(morphGood.("Average Diameter"));
+    morphGoodMAD = mad(morphGood.("Average Diameter"), 1);
+    Upper = morphGoodMedian+morphGoodMAD;
+    Lower = morphGoodMedian-morphGoodMAD;
+    morphGood = morphGood(morphGood.("Average Diameter")>=Lower & morphGood.("Average Diameter")<=Upper, :);
+    morphBad = subsetBad(subsetBad.Label==qq{1}, :);
+    %Get the bad subset
+  
+    randGood = datasample(morphGood,samplesize,'Replace',false);
+    randBad = datasample(morphBad,samplesize,'Replace',false);
+    goodSamples = [];
+    badSamples = [];
+    strGood = [];
+    strBad = [];
+    for ii = 1:1:samplesize
+        goodSampleDir = fullfile(baseDir, "HiRes Area","Images", randGood.Image(ii));
+        badSampleDir = fullfile(baseDir, "HiRes Area","Images", randBad.Image(ii));
+
+        
+        goodSample = imread(goodSampleDir, 'png');
+        badSample = imread(badSampleDir, 'png');
+
+        goodSamples(:,:,ii) = uint8(goodSample);
+        badSamples(:,:,ii) = uint8(badSample);
+
+    end
+    strGood = strcat("Median ± MAD: ",qq{1},"(n = ", num2str(samplesize), ")");
+    strBad = strcat("Bad: ",qq{1},"(n = ", num2str(samplesize), ")");
+
+    fig1 = figure;
+    montage(uint8(goodSamples))
+    title(strGood)
+    randomFullFileName = fullfile(dirExport, strcat("Good_", qq{1}));
+    saveas(fig1, randomFullFileName);
+
+    fig2 = figure;
+    montage(uint8(badSamples))
+    title(strBad)
+    randomFullFileName = fullfile(dirExport, strcat("Bad", qq{1}));
+    saveas(fig2, randomFullFileName);
+
+end
+
+% Save & export new data table
+%Export the clean cell table to the base import directory
+baseFileName = strcat("subsetGood2",".mat");
+cellFullFileName = fullfile(baseDir, baseFileName);
+
+save(cellFullFileName,"subsetGood2");
+
+% Load new data table
+baseFileName = strcat("subsetGood2",".mat");
+cellFullFileName = fullfile(baseDir, baseFileName);
+load(cellFullFileName,"subsetGood2");
+
+% Analyze the cleaned data via boxplots and normality tests
+cellTableClean = subsetGood2;
+%Define RBC morphology label order
+rbcLabels = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
+%Get another boxplot of the cell morphology diameters and save it
+boxplotFig2 = figure;
+boxplot(cellTableClean.("Average Diameter"),cellTableClean.Label, 'GroupOrder', rbcLabels);
+title('Cleaned Box plot: Average Diameter by Morphology Type')
+xlabel('Morphology Type')
+ylabel('Average RBC Diameter (\mum)')
+
+%Create the file name for the box plot
+boxplotExport = fullfile(dirExport, "CleanedAverageDiameterBoxplot.png");
+
+%Export the figure to the Data Analysis Folder
+saveas(boxplotFig2, boxplotExport);
+
+%Test for normality again
+AverageDiameterNormalityAnalysis(cellTableClean,dirNormalityClean)
+% Analyze the morphology diameter medians & means for statistical significance and effect size
+%Get each morphology average diameter into an array
+D_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'D', 'Average Diameter'));
+E1_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'E1', 'Average Diameter'));
+E2_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'E2', 'Average Diameter'));
+E3_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'E3', 'Average Diameter'));
+SE_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'SE', 'Average Diameter'));
+S_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'S', 'Average Diameter'));
+ST_avgDiameter = table2array(cellTableClean(cellTableClean.Label == 'ST', 'Average Diameter'));
+
+%Test the medians
+%To make multiple comparisons of the medians, we use the the Kruskal-Wallis test
+[pKW,tblKW,statsKW] = kruskalwallis(cellTableClean.("Average Diameter"),cellTableClean.Label);
+%Compare the morphologies individually
+[c,m,~,nms] = multcompare(statsKW);
+%Make a table of the compared groups and the associated p-value
+KWResults = table(nms(c(:, 1)), nms(c(:, 2)), c(:, [6]), 'VariableNames',{'Category 1', 'Category 2', 'p-value'});
+%Write the anova results to a file
+KWExport = fullfile(dirExport,'cleaned-Kruskal-Wallis-Results.mat');
+save(KWExport,"KWResults")
+
+% Now, test the mean via a two-sample t-test for each morphology class
+% Also, get the effect size (cohen d and common lanage effect size)
+%Combine double vectors into a cell array
+x = {D_avgDiameter,E1_avgDiameter,E2_avgDiameter,E3_avgDiameter,SE_avgDiameter,S_avgDiameter,ST_avgDiameter};
+%Define the order of the groups
+groups = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
+
+% Get the groups count
+k = numel(groups);
+
+% Calculate the number of tests
+K = (k*(k-1))/2;
+
+% Set Alpha
+alphaUnadj = 0.05;
+
+% Ajust Alpha with Bonferroni
+alphaAdj = alphaUnadj/K;
+
+% Create an empty table for the results
+variable_names_types = [...
+    ["Group 1", "categorical"]; ...
+    ["Group 2", "categorical"]; ...
+    ["Sample Size", "double"]; ...
+    ["Unadjusted T Stat", "double"]; ...
+    ["Adjusted T Stat", "double"]; ...
+    ["df", "double"]; ...
+    ["p-unadj.", "double"]; ...
+    ["p-adj.", "double"]; ...
+    ["p (Bootstrap t-Test)", "double"]; ...
+    ["p (Median Bootstrap Test)", "double"]; ...
+    ["Unadjusted Mean Diff 95% CI", "double"]; ...
+    ["Adjusted Mean Diff 95% CI", "double"]; ...
+    ["Mean Difference (A-B)", "double"]; ...
+    ["Average Standard Deviation", "double"]; ...
+    ["Cohen's d", "double"]; ...
+    ];
+
+ttestResults = table('Size',[0,size(variable_names_types,1)],...
+    'VariableNames', variable_names_types(:,1),...
+    'VariableTypes', variable_names_types(:,2));
+
+%Iterate through each category combination
+for i = 1:1:k-1
+    for j = i+1:1:k
+
+        %Get the groups to compare
+        cat1 = groups(i);
+        cat2 = groups(j);
+        %Define observations
+        obs1 = x{:, i};
+        obs2 = x{:,j};
+        %Compute their mean, the mean difference, and sample sizes
+        obs1Mean = mean(obs1);
+        obs2Mean = mean(obs2);
+        meanDiffAB = obs1Mean - obs2Mean;
+        meanDiffBA = obs2Mean - obs1Mean;
+        n = [numel(obs1), numel(obs2)];
+
+        %Use the two-sample t-test for unequal variances to get unadjusted
+        %& adjusted p-values, confidence intervals, and other statistics
+        [~,pUnadj,ciUnadj,statsUnadj] = ttest2(obs1, obs2,'Vartype','unequal', 'alpha', alphaUnadj);
+        [~,pAdj,ciAdj,statsAdj] = ttest2(obs1, obs2,'Vartype','unequal', 'alpha', alphaAdj);
+
+        %Use bootstrap hypothesis testing to validate significance
+        %Set the number of replicates
+        replicates = 10000;
+        %Validate t-test with a studentized bootstrap test
+        [~,~, tBootP] = StudentBootstrapTest(obs1,obs2, replicates);
+        %Validate Kruskal-Wallis test with a median bootstrap test
+        [~, ~, medianBootP] = simpleBootstrapHypothesisTest(obs1,obs2, @(x)median(x), replicates);
+
+        %Calculate Cohen's d using an averaged deviation
+        sdAvg = sqrt(((std(obs1)^2)+(std(obs2)^2))/2);
+        effectSize = meanDiffAB/sdAvg;
+
+
+        %Add the results to the table
+        newResults = {cat1, cat2, n, statsUnadj.tstat, statsAdj.tstat, statsUnadj.df, pUnadj, pAdj, tBootP,medianBootP, ciUnadj',ciAdj',meanDiffAB, sdAvg, effectSize};
+        ttestResults = [ttestResults;newResults];
+    end
+end
+%Write the ttest results to excel file
+ttestResultsExport = fullfile(dirExport,'ttestResults.xls');
+writetable(ttestResults,ttestResultsExport, 'FileType','spreadsheet');
+% Plot the Average Diameters by Morphology Type
+
+%Plot the distributions for comparison to a previous study
+%Get the histogram counts of each morphology diameter
+%Get the histogram counts of each morphology diameter
+[Dn,xout] = hist(D_avgDiameter,[4:.1:10]);%D
+[E1n,xout] = hist(E1_avgDiameter,[4:.1:10]);%EI
+[E2n,xout] = hist(E2_avgDiameter,[4:.1:10]);%EIIE
+[E3n,xout] = hist(E3_avgDiameter,[4:.1:10]);%EIII
+[SEn,xout] = hist(SE_avgDiameter,[4:.1:10]);%SE
+[STn,xout] = hist(ST_avgDiameter,[4:.1:10]);%ST
+[Sn,xout] = hist(S_avgDiameter,[4:.1:10]);%S
+
+plotFig = figure;
+hold on
+plot(xout,Dn/sum(Dn),'.-r');
+plot(xout,E1n/sum(E1n),'o-g');
+plot(xout,E2n/sum(E2n),'v-b');
+plot(xout,E3n/sum(E3n),'d-m');
+plot(xout,SEn/sum(SEn),'s-k');
+plot(xout,STn/sum(STn),'s-y');
+plot(xout,Sn/sum(Sn),'*-c');
+
+ylim([0 .16]);
+xlim([4.5 9.5]);
+xlabel('Average RBC Diameter (\mum)')
+ylabel('Percent of Total RBCs by Morphology Class')
+title('Average Diameter Distribution by Morphology Class')
+legend('Discocyte','Echinocyte 1','Echinocyte 2','Echinocyte 3','Sphero-Echinocyte','Stomatocyte','Spherocyte','Location','NorthEast')
+
+%Create the file name for the plot
+plotExport = fullfile(dirExport, "AverageDiameterPlot.m");
+
+%Export the figure to the Data Analysis Folder
+saveas(plotFig, plotExport);
+
+% Get the descriptive statistics for each distribution
+means = [mean(D_avgDiameter), mean(E1_avgDiameter), mean(E2_avgDiameter), ...
+    mean(E3_avgDiameter),mean(SE_avgDiameter), mean(S_avgDiameter), mean(ST_avgDiameter),];
+
+stds = [std(D_avgDiameter), std(E1_avgDiameter), std(E2_avgDiameter), ...
+    std(E3_avgDiameter),std(SE_avgDiameter), std(S_avgDiameter), std(ST_avgDiameter)];
+
+meanMADs = [mad(D_avgDiameter), mad(E1_avgDiameter), mad(E2_avgDiameter), ...
+    mad(E3_avgDiameter),mad(SE_avgDiameter), mad(S_avgDiameter), mad(ST_avgDiameter)];
+
+medians = [median(D_avgDiameter), median(E1_avgDiameter), median(E2_avgDiameter), ...
+    median(E3_avgDiameter),median(SE_avgDiameter), median(S_avgDiameter), median(ST_avgDiameter)];
+
+medianMADs = [mad(D_avgDiameter, 1), mad(E1_avgDiameter, 1), mad(E2_avgDiameter, 1), ...
+    mad(E3_avgDiameter, 1),mad(SE_avgDiameter, 1), mad(S_avgDiameter, 1), mad(ST_avgDiameter, 1)];
+
+iqrs = [iqr(D_avgDiameter), iqr(E1_avgDiameter), iqr(E2_avgDiameter), ...
+    iqr(E3_avgDiameter),iqr(SE_avgDiameter), iqr(S_avgDiameter), iqr(ST_avgDiameter)];
+
+ranges = [range(D_avgDiameter), range(E1_avgDiameter), range(E2_avgDiameter), ...
+    range(E3_avgDiameter),range(SE_avgDiameter), range(S_avgDiameter), range(ST_avgDiameter)];
+
+skewes = [skewness(D_avgDiameter), skewness(E1_avgDiameter), skewness(E2_avgDiameter), ...
+    skewness(E3_avgDiameter),skewness(SE_avgDiameter), skewness(S_avgDiameter), skewness(ST_avgDiameter)];
+
+kurtosises = [kurtosis(D_avgDiameter), kurtosis(E1_avgDiameter), kurtosis(E2_avgDiameter), ...
+    kurtosis(E3_avgDiameter),kurtosis(SE_avgDiameter), kurtosis(S_avgDiameter), kurtosis(ST_avgDiameter)];
+
+samples = [numel(D_avgDiameter), numel(E1_avgDiameter), numel(E2_avgDiameter), ...
+    numel(E3_avgDiameter),numel(SE_avgDiameter), numel(S_avgDiameter), numel(ST_avgDiameter)];
+
+freqs = (samples./sum(samples))*100;
+
+% Put the descriptive statistics in a table
+descrStats = table(...
+    rbcLabels',...
+    means', ...
+    stds', ...
+    meanMADs', ...
+    medians',  ...
+    medianMADs', ...
+    iqrs', ...
+    ranges', ...
+    skewes', ...
+    kurtosises', ...
+    samples', ...
+    freqs', ...
+    'VariableNames',{'Morphology','Means','STDs','Mean MADs', 'Medians', 'Median MADs', 'IQRs', 'Ranges', 'Skewness', 'Kurtosis','Sample Size', 'Frequencies'});
+
+%Write the descriptive statistics to a file
+descrStatsExport = fullfile(dirExport,'cleanedDescriptiveStats.xls');
+writetable(descrStats,descrStatsExport, 'FileType','spreadsheet');
+
+%Get the mean & std confidence intervals the classic way, assumming normality
+% Make 95% confidence intervals using the classic formulas for mean & std
+
+alpha = 0.05;
+%Mean CI classic
+Z = norminv((1-alpha));
+SEM = (stds./sqrt(samples));
+CI95_Norm_Mean_LCs = means - Z.*SEM;
+CI95_Norm_Mean_UCs = means + Z.*SEM;
+%STD CI classic
+dF = (samples-1);
+chiLCs = chi2inv(1-(alpha/2),dF);
+chiUCs = chi2inv((alpha/2),dF);
+CI95_Norm_STD_LCs = stds.*sqrt(dF./chiLCs);
+CI95_Norm_STD_UCs = stds.*sqrt(dF./chiUCs);
+
+% Make 95% confidence interval using bootstrap for mean, std, median, and iqr
+bootFunc = @(x)[mean(x) std(x) median(x) iqr(x)];
+replicates = 10000; %10,000 replicates is typical for publication quality
+[ciD,bootstatD] = bootci(replicates,{bootFunc,D_avgDiameter},'Alpha', alpha);
+[ciE1,bootstatE1] = bootci(replicates,{bootFunc,E1_avgDiameter},'Alpha', alpha);
+[ciE2,bootstatE2] = bootci(replicates,{bootFunc,E2_avgDiameter},'Alpha', alpha);
+[ciE3,bootstatE3] = bootci(replicates,{bootFunc,E3_avgDiameter},'Alpha', alpha);
+[ciSE,bootstatSE] = bootci(replicates,{bootFunc,SE_avgDiameter},'Alpha', alpha);
+[ciS,bootstatS] = bootci(replicates,{bootFunc,S_avgDiameter},'Alpha', alpha);
+[ciST,bootstatST] = bootci(replicates,{bootFunc,ST_avgDiameter},'Alpha', alpha);
+
+% Separate the data neatly into appropriate variables
+meanBootstats = [bootstatD(:,1),bootstatE1(:,1), bootstatE2(:,1), bootstatE3(:,1), bootstatSE(:,1),bootstatS(:,1),bootstatST(:,1)]';
+stdBootstats = [bootstatD(:,2),bootstatE1(:,2), bootstatE2(:,2), bootstatE3(:,2), bootstatSE(:,2),bootstatS(:,2),bootstatST(:,2)]';
+
+medianBootstats = [bootstatD(:,3),bootstatE1(:,3), bootstatE2(:,3), bootstatE3(:,3), bootstatSE(:,3),bootstatS(:,3),bootstatST(:,3)]';
+iqrBootstats = [bootstatD(:,4),bootstatE1(:,4), bootstatE2(:,4), bootstatE3(:,4), bootstatSE(:,4),bootstatS(:,4),bootstatST(:,4)]';
+
+CI95_Bootstrap_Mean_LCs = [ciD(1,1); ciE1(1,1); ciE2(1,1); ciE3(1,1); ciSE(1,1); ciS(1,1); ciST(1,1)];
+CI95_Bootstrap_Mean_UCs = [ciD(2,1); ciE1(2,1); ciE2(2,1); ciE3(2,1); ciSE(2,1); ciS(2,1); ciST(2,1)];
+CI95_Bootstrap_STD_LCs = [ciD(1,2); ciE1(1,2); ciE2(1,2); ciE3(1,2); ciSE(1,2); ciS(1,2); ciST(1,2)];
+CI95_Bootstrap_STD_UCs = [ciD(2,2); ciE1(2,2); ciE2(2,2); ciE3(2,2); ciSE(2,2); ciS(2,2); ciST(2,2)];
+
+CI95_Bootstrap_Med_LCs = [ciD(1,3); ciE1(1,3); ciE2(1,3); ciE3(1,3); ciSE(1,3); ciS(1,3); ciST(1,3)];
+CI95_Bootstrap_Med_UCs = [ciD(2,3); ciE1(2,3); ciE2(2,3); ciE3(2,3); ciSE(2,3); ciS(2,3); ciST(2,3)];
+CI95_Bootstrap_IQR_LCs = [ciD(1,4); ciE1(1,4); ciE2(1,4); ciE3(1,4); ciSE(1,4); ciS(1,4); ciST(1,4)];
+CI95_Bootstrap_IQR_UCs = [ciD(2,4); ciE1(2,4); ciE2(2,4); ciE3(2,4); ciSE(2,4); ciS(2,4); ciST(2,4)];
+
+% Put 95% confidence interval data into a table
+% Create the confidence table
+Confidences = table(...
+    rbcLabels',...
+    CI95_Norm_Mean_LCs', ...
+    CI95_Bootstrap_Mean_LCs, ...
+    means', ...
+    CI95_Norm_Mean_UCs', ...
+    CI95_Bootstrap_Mean_UCs, ...
+    meanBootstats,...
+    CI95_Norm_STD_LCs',  ...
+    CI95_Bootstrap_STD_LCs, ...
+    stds', ...
+    CI95_Norm_STD_UCs', ...
+    CI95_Bootstrap_STD_UCs, ...
+    stdBootstats,...
+    CI95_Bootstrap_Med_LCs, ...
+    medians', ...
+    CI95_Bootstrap_Med_UCs, ...
+    medianBootstats,...
+    CI95_Bootstrap_IQR_LCs, ...
+    iqrs', ...
+    CI95_Bootstrap_IQR_UCs, ...
+    iqrBootstats,...
+    'VariableNames',{'Morphology', ...
+    'Mean LC Norm', ...
+    'Mean LC Bootstrap', ...
+    'Mean', 'Mean UC Norm', ...
+    'Mean UC Bootstrap', ...
+    'Bootstats (Mean)', ...
+    'STD LC Norm', ...
+    'STD LC Bootstrap', ...
+    'STD','STD UC Norm', ...
+    'STD UC Bootstrap', ...
+    'Bootstats (STD)' ...
+    'Median LC Bootstrap', ...
+    'Median', ...
+    'Median UC Bootstrap', ...
+    'Bootstats (Median)', ...
+    'IQR LC Bootstrap', ...
+    'IQR', ...
+    'IQR UC Bootstrap', ...
+    'Bootstats (IQR)' ...
+    });
+
+%Write the table to a file
+ciStatsExport = fullfile(dirExport,'ConfidenceIntervalStats.mat');
+save(ciStatsExport,'Confidences');
+
+%plot each to confirm the validity of the 95% confidence intervals
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'D'), :),dirBootstrap)
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'E1'), :),dirBootstrap)
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'E2'), :),dirBootstrap)
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'E3'), :),dirBootstrap)
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'SE'), :),dirBootstrap)
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'S'), :),dirBootstrap)
+AverageDiameterBootstrapAnalysis(Confidences(strcmp(Confidences.("Morphology"),'ST'), :),dirBootstrap)
+
+
+% Calculate bootstrap effect sizes using bootstrap mean and std bootstats
+
+%Load table
+load(fullfile(dirExport,'ConfidenceIntervalStats.mat'),'Confidences');
+% Set boot stats
+meanBootstats = Confidences.('Bootstats (Mean)');
+stdBootstats = Confidences.('Bootstats (STD)');
+
+% Set Alpha
+alphaUnadj = 0.05;
+%Define the order of the groups in the bootstat vectors
+groups = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
+
+% Get the groups count
+k = numel(groups);
+
+% Calculate the number of tests
+K = (k*(k-1))/2;
+
+% Set Alpha
+alphaUnadj = 0.05;
+
+% Adjust Alpha with Bonferroni
+alphaAdj = alphaUnadj/K;
+
+% Create an empty table for the results
+variable_names_types = [...
+    ["Group 1", "categorical"]; ...
+    ["Group 2", "categorical"]; ...
+    ["Alpha-unadj.", "double"]; ...
+    ["Alpha-adj.", "double"]; ...
+    ["Adjusted 95% LC CLES P(A>B) t-method", "double"]; ...
+    ["Observed P(A>B)", "double"]; ...
+    ["Adjusted 95% UC CLES P(A>B) t-method", "double"]; ...
+    ["Adjusted 95% LC CLES P(B>A) t-method", "double"]; ...
+    ["Observed P(B>A)", "double"]; ...
+    ["Adjusted 95% UC CLES P(B>A) t-method", "double"]; ...
+    ["Adjusted 95% LC CLES P(A>B) Prc-method", "double"]; ...
+    ["Adjusted 95% UC CLES P(A>B) Prc-method", "double"]; ...
+    ["Adjusted 95% LC CLES P(B>A) Prc-method", "double"]; ...
+    ["Adjusted 95% UC CLES P(B>A) Prc-method", "double"]; ...
+    ];
+
+effectResults = table('Size',[0,size(variable_names_types,1)],...
+    'VariableNames', variable_names_types(:,1),...
+    'VariableTypes', variable_names_types(:,2));
+count = 0;
+%Iterate through each category combination
+for i = 1:1:k-1
+    for j = i+1:1:k
+        count = count+1;
+        %Get the groups to compare
+        cat1 = groups(i);
+        cat2 = groups(j);
+
+        %Define observations
+        obs1 = x{:, i};
+        obs2 = x{:,j};
+
+        %Define Bootstats
+        obs1MeanBoot = meanBootstats(i,:);
+        obs2MeanBoot = meanBootstats(j,:);
+        obs1SDBoot = stdBootstats(i,:);
+        obs2SDBoot = stdBootstats(j,:);
+
+        %Compute the mean difference and combined standard deviation
+        obs1Mean = mean(obs1);
+        obs2Mean = mean(obs2);
+        meanDiffAB = obs1Mean - obs2Mean;
+        meanDiffBA = obs2Mean - obs1Mean;
+        sdComb = sqrt(((std(obs1)^2)+(std(obs2)^2)));
+
+        meanDiffABBoot = obs1MeanBoot - obs2MeanBoot;
+        meanDiffBABoot = obs2MeanBoot - obs1MeanBoot;
+        sdCombBoot = sqrt(((obs1SDBoot.^2)+(obs2SDBoot.^2)));
+
+        %Calculate the coomon language effect size
+        clesAB = normcdf(0,meanDiffAB,sdComb, 'upper');
+        clesBA = normcdf(0,meanDiffBA,sdComb,'upper');
+
+        clesABBoot = normcdf(0,meanDiffABBoot,sdCombBoot, 'upper');
+        clesBABoot = normcdf(0,meanDiffBABoot,sdCombBoot,'upper');
+
+        %Get the 95% Confidence interval through the percentile method and t distribution
+        clesAB95Prc = prctile(clesABBoot,[((alpha/2)*100), ((1-(alpha/2))*100)]); %Percentile method
+        clesBA95Prc = prctile(clesBABoot,[((alpha/2)*100), ((1-(alpha/2))*100)]); %Percentile method
+        T_AB = tinv((1-alphaAdj), numel(clesABBoot)-1);  % t-distribution method
+        T_BA = tinv((1-alphaAdj), numel(clesBABoot)-1);  % t-distribution method
+        SEM_AB = (std(clesABBoot)./sqrt(numel(clesABBoot))); % t-distribution method
+        SEM_BA = (std(clesBABoot)./sqrt(numel(clesBABoot))); % t-distribution method
+        clesAB95 = [mean(clesABBoot) - T_AB.*SEM_AB,  mean(clesABBoot) + T_AB.*SEM_AB]; % t-distribution method
+        clesBA95 = [mean(clesBABoot) - T_BA.*SEM_BA,  mean(clesBABoot) + T_AB.*SEM_BA]; % t-distribution method
+
+
+        %Add the results to the table
+        newResults = {cat1, cat2, alphaUnadj, alphaAdj, clesAB95(1),clesAB,clesAB95(2), clesBA95(1),clesBA,clesBA95(2), clesAB95Prc(1), clesAB95Prc(2), clesBA95Prc(1), clesBA95Prc(2)};
+        effectResults = [effectResults;newResults];
+
+        dataNames = {'Bootstrap', 'Sample','','95% CI (T-Bootstrap)', '', '95% CI (Prc-Bootstrap)'};
+        %Plot the results
+        Fig(count) = figure('Position', [3.666666666666667,41.666666666666664,1682,839.3333333333333]);
+        subplot(1, 2, 1)
+        histogram(clesABBoot.*100)
+        xline(clesAB*100,'r', 'LineWidth',2)
+        xline(clesAB95(1)*100,':c', 'LineWidth',2)
+        xline(clesAB95(2)*100,':c', 'LineWidth',2)
+        xline(clesAB95Prc(1)*100,':m', 'LineWidth',2)
+        xline(clesAB95Prc(2)*100,':m', 'LineWidth',2)
+        title(strcat("P(", cat1, " > ", cat2, ")_{Average Diameter}"));
+        xlabel('Percentage Likelihood [%]')
+        ylabel('Counts')
+        legend(dataNames,'Location','northeast')
+
+        subplot(1, 2, 2)
+        histogram(clesBABoot.*100)
+        xline(clesBA*100,'r', 'LineWidth',2)
+        xline(clesBA95(1)*100,':c', 'LineWidth',2)
+        xline(clesBA95(2)*100,':c', 'LineWidth',2)
+        xline(clesBA95Prc(1)*100,':m', 'LineWidth',2)
+        xline(clesBA95Prc(2)*100,':m', 'LineWidth',2)
+        title(strcat("P(", cat2, " > ", cat1, ")_{Average Diameter}"));
+        xlabel('Percentage Likelihood [%]')
+        ylabel('Counts')
+        legend(dataNames,'Location','northeast')
+
+        dirExport1 = fullfile(dirBootstrap, strcat("Effect_Size_",cat1,"_VS_",cat2,".png"));
+        saveas(Fig(count), dirExport1);
+    end
+end
+
+%Write the effect size statistics to a file
+effectStatsExport = fullfile(dirExport,'cleanedEffectSize.xls');
+writetable(effectResults,effectStatsExport, 'FileType','spreadsheet');
+
+% Put the effect size data into a matrix, plot, and save
+
+%Define the rbc labels
+groups = {'D', 'E1', 'E2', 'E3', 'SE', 'S', 'ST'};
+%Generate a blank NaN matrix to store effect sizes in
+effectMatrix = NaN(7, 7);
+%Iterate through the length of the morphology classes, minus 1
+for i = 1:1:length(groups)-1
+    %Iterate through the morphology classes, starting with the next class
+    %and ending with the last class. We want to get all comparisons
+    for j = i+1:1:length(groups)
+        %From the table, place the Observed P(A>B) in the ith row and jth column element
+        effectMatrix(i, j) = table2array(effectResults((effectResults.("Group 1") == groups{i})&(effectResults.("Group 2") == groups{j}), "Observed P(A>B)"));
+        %From the table, place the Observed P(B>A) in the jth row and ith column
+        effectMatrix(j, i) = table2array(effectResults((effectResults.("Group 1") == groups{i})&(effectResults.("Group 2") == groups{j}), "Observed P(B>A)"));
+    end
+
+end
+
+%Plot the effect size matrix as a heat map
+figHM = figure('Position', [573,135.6666666666667,889.3333333333333,722.3333333333333]);
+hm = heatmap( groups, groups, effectMatrix*100, 'Colormap',cool);
+hm.Title = "Common Language Effect Size Matrix: P(A>B)";
+hm.XLabel = 'Group B';
+hm.YLabel = 'Group A';
+hm.ColorbarVisible = 'off';
+hm.CellLabelFormat = '%.2f%%';
+
+dirExportEffectSize = fullfile(dirExport, "Effect_Size_Matrix.m");
+saveas(hm, dirExportEffectSize);
+
+% Plot the mean average diameter 95% CIs for each morphology class
+dE1 = [1 2];
+e2ST = [3 7];
+sSE = [5 6];
+
+xDE1 = categorical(groups(dE1));
+yDE1 = means(dE1);
+negDE1 = abs(CI95_Bootstrap_Mean_LCs(dE1)'- yDE1);
+posDE1 = abs(CI95_Bootstrap_Mean_LCs(dE1)'- yDE1);
+
+xE2ST = categorical(groups(e2ST));
+yE2ST = means(e2ST);
+negE2ST = abs(CI95_Bootstrap_Mean_LCs(e2ST)'- yE2ST);
+posE2ST = abs(CI95_Bootstrap_Mean_LCs(e2ST)'- yE2ST);
+
+xSSE = categorical(groups(sSE));
+ySSE = means(sSE);
+negSSE = abs(CI95_Bootstrap_Mean_LCs(sSE)'- ySSE);
+posSSE = abs(CI95_Bootstrap_Mean_LCs(sSE)'- ySSE);
+
+Fig1 = figure('Position', [100, 100, 1380, 720], 'PaperPositionMode', 'auto'); %Creates initial figure variable
+p1 = uipanel('Parent',Fig1,'BorderType','none' ); %creates the panel
+p1.Title = 'Mean Average Diameter 95% CIs by Morphology Class';
+p1.TitlePosition = 'centertop'; %Sets the super title in the top center position
+p1.FontSize = 20; %Sets the font size of the super title
+p1.FontWeight = 'bold'; %Sets the font of the super title to bold
+
+subplot(2,3,3,'Parent',p1)
+errorbar(yDE1,xDE1,negDE1,posDE1, 'horizontal','ob', 'MarkerSize',1, 'CapSize',10, 'LineWidth', 2)
+xline(yDE1,':r', 'LineWidth',2)
+xlabel('Average RBC Diameter (\mum)')
+ylabel('Morphology Class')
+title('D & E1')
+
+subplot(2,3,2,'Parent',p1)
+errorbar(yE2ST,xE2ST,negE2ST,posE2ST, 'horizontal','ob','MarkerSize',1, 'CapSize',10, 'LineWidth', 2)
+xline(yE2ST,':r', 'LineWidth',2)
+xlabel('Average RBC Diameter (\mum)')
+ylabel('Morphology Class')
+title('E2 & ST')
+
+subplot(2,3,1,'Parent',p1)
+errorbar(ySSE,xSSE,negSSE,posSSE, 'horizontal','ob','MarkerSize',1, 'CapSize',10, 'LineWidth', 2)
+xline(ySSE,':r', 'LineWidth',2)
+xlabel('Average RBC Diameter (\mum)')
+ylabel('Morphology Class')
+title('S & SE')
+
+subplot(2,3,[4 5 6],'Parent',p1)
+errorbar(means,categorical(groups),abs(CI95_Bootstrap_Mean_LCs'-means),abs(CI95_Bootstrap_Mean_UCs'-means), 'horizontal','ob','MarkerSize',1, 'CapSize',10, 'LineWidth', 2)
+xline(means,':r', 'LineWidth',2)
+xlabel('Average RBC Diameter (\mum)')
+ylabel('Morphology Class')
+title('All RBC Morphologies')
+
+dirExportConfidencePlot = fullfile(dirExport, "ConfidencePlot.png");
+saveas(Fig1, dirExportConfidencePlot);
+
+
+disp('Problem 4 end')
+disp('-----------------------------------------------------------')
